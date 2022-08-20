@@ -25,17 +25,24 @@ async function runCron() {
     let embed = new EmbedBuilder()
         .setColor(0x0099FF)
         .setTitle(`Current Floor Prices`)
-    let promises : Promise<any>[] = [];    
+    let promises : Promise<any>[] = [];
     for (let collection of collections) {
         promises.push(new Promise<void>(async(resolve, reject) => {
             const url = process.env.ME_URL + collection + process.env.ME_URL2;
+            const less = process.env[collection.toUpperCase() + '_LESS_THAN'];
+            const more = process.env[collection.toUpperCase() + '_MORE_THAN'];
             const stats = await axios.get(url!);
+            const floorPrice = stats.data.floorPrice / 1000000000;
+            if (floorPrice >= Number(more) || floorPrice <= Number(less)) {
+                embed.setColor('#992D22');
+                channel.send(`<@978307628784582726> Check floor price for ${collection}`);
+            }
             embed.addFields(
-                    { name: `${stats.data.symbol}`,
-                    value: `Floor: ${stats.data.floorPrice / 1000000000},
-                    Listed: ${stats.data.listedCount},
-                    Avg 24h price: ${stats.data.avgPrice24hr / 1000000000}` },
-                )
+                { name: `${stats.data.symbol}`,
+                value: `Floor: ${floorPrice},
+                Listed: ${stats.data.listedCount},
+                Avg 24h price: ${stats.data.avgPrice24hr / 1000000000}` },
+            )
             resolve();
         }));
     }
