@@ -35,7 +35,7 @@ async function runCron() {
             const floorPrice = stats.data.floorPrice / 1000000000;
             if (floorPrice >= Number(more) || floorPrice <= Number(less)) {
                 embed.setColor('#992D22');
-                channel.send(`<@978307628784582726> Check floor price for ${collection}`);
+                channel.send(`<@978307628784582726> and <@978210281916358656> Check floor price for ${collection}`);
             }
             embed.addFields(
                 { name: `${stats.data.symbol}`,
